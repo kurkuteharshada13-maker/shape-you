@@ -1,0 +1,892 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shape You - Fitness & Diet Planner</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f8f9fa;
+        }
+
+        .navbar {
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .hero-section {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 80vh;
+            color: white;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+            transform: translateY(-2px);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            border: none;
+        }
+
+        .card {
+            border-radius: 15px;
+            transition: all 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .page {
+            min-height: calc(100vh - 200px);
+            padding: 50px 0;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .workout-card {
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: all 0.3s ease;
+        }
+
+        .workout-card:hover {
+            border-color: #667eea;
+            transform: scale(1.05);
+        }
+
+        .meal-section {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        footer {
+            background: #343a40;
+            color: white;
+            padding: 30px 0;
+            margin-top: 50px;
+        }
+
+        @media print {
+            .no-print {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary sticky-top no-print">
+        <div class="container">
+            <a class="navbar-brand fw-bold" href="#" onclick="showPage('home')">
+                <i class="fas fa-dumbbell"></i> Shape You
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto" id="navMenu">
+                    <li class="nav-item"><a class="nav-link" href="#" onclick="showPage('home')">Home</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#" onclick="showPage('about')">About</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#" onclick="showPage('contact')">Contact</a></li>
+                    <li class="nav-item" id="loginNav"><a class="nav-link" href="#" onclick="showPage('login')">Login</a></li>
+                    <li class="nav-item" id="registerNav"><a class="btn btn-light btn-sm ms-2" href="#" onclick="showPage('register')">Register</a></li>
+                    <li class="nav-item hidden" id="dashboardNav"><a class="nav-link" href="#" onclick="showPage('dashboard')">Dashboard</a></li>
+                    <li class="nav-item hidden" id="logoutNav"><a class="nav-link" href="#" onclick="logout()">Logout</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Alert Container -->
+    <div class="container mt-3 no-print">
+        <div id="alertContainer"></div>
+    </div>
+
+    <!-- Home Page -->
+    <div id="homePage" class="page">
+        <section class="hero-section text-white d-flex align-items-center">
+            <div class="container">
+                <div class="row align-items-center">
+                    <div class="col-lg-6">
+                        <h1 class="display-3 fw-bold mb-4">Transform Your Body</h1>
+                        <p class="lead mb-4">Personalized workout and diet plans tailored to your fitness goals. Start your journey today!</p>
+                        <button class="btn btn-light btn-lg px-4 me-3" onclick="showPage('register')">
+                            <i class="fas fa-user-plus"></i> Get Started
+                        </button>
+                        <button class="btn btn-outline-light btn-lg px-4" onclick="showPage('login')">
+                            <i class="fas fa-sign-in-alt"></i> Login
+                        </button>
+                    </div>
+                    <div class="col-lg-6 text-center">
+                        <i class="fas fa-heartbeat" style="font-size: 15rem; opacity: 0.2;"></i>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="py-5 bg-light">
+            <div class="container">
+                <h2 class="text-center mb-5 fw-bold">Why Choose Shape You?</h2>
+                <div class="row g-4">
+                    <div class="col-md-4">
+                        <div class="card h-100 border-0 shadow-sm">
+                            <div class="card-body text-center p-4">
+                                <i class="fas fa-running text-primary" style="font-size: 3rem;"></i>
+                                <h4 class="mt-3">Custom Workouts</h4>
+                                <p>Personalized workout plans for home or gym based on your goals.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card h-100 border-0 shadow-sm">
+                            <div class="card-body text-center p-4">
+                                <i class="fas fa-utensils text-success" style="font-size: 3rem;"></i>
+                                <h4 class="mt-3">Diet Plans</h4>
+                                <p>Customized meal plans aligned with your weight goals.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card h-100 border-0 shadow-sm">
+                            <div class="card-body text-center p-4">
+                                <i class="fas fa-chart-line text-info" style="font-size: 3rem;"></i>
+                                <h4 class="mt-3">Track Progress</h4>
+                                <p>Monitor your fitness journey with detailed analytics.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Register Page -->
+    <div id="registerPage" class="page hidden">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-md-6">
+                    <div class="card shadow-lg border-0">
+                        <div class="card-body p-5">
+                            <h2 class="text-center mb-4 fw-bold text-primary">
+                                <i class="fas fa-user-plus"></i> Create Account
+                            </h2>
+                            <form onsubmit="register(event)">
+                                <div class="mb-3">
+                                    <label class="form-label fw-semibold">Full Name</label>
+                                    <input type="text" class="form-control" id="regName" required>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label fw-semibold">Age</label>
+                                        <input type="number" class="form-control" id="regAge" min="10" max="100" required>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label fw-semibold">Weight (kg)</label>
+                                        <input type="number" class="form-control" id="regWeight" step="0.1" min="30" required>
+                                    </div>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label fw-semibold">Email</label>
+                                    <input type="email" class="form-control" id="regEmail" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label fw-semibold">Password</label>
+                                    <input type="password" class="form-control" id="regPassword" minlength="6" required>
+                                </div>
+                                <div class="mb-4">
+                                    <label class="form-label fw-semibold">Fitness Goal</label>
+                                    <select class="form-select" id="regGoal" required>
+                                        <option value="">Choose your goal...</option>
+                                        <option value="lose">Lose Weight</option>
+                                        <option value="gain">Gain Muscle</option>
+                                        <option value="maintain">Maintain Fitness</option>
+                                    </select>
+                                </div>
+                                <button type="submit" class="btn btn-primary btn-lg w-100">
+                                    <i class="fas fa-check-circle"></i> Register
+                                </button>
+                            </form>
+                            <p class="text-center mt-4 mb-0">
+                                Already have an account? 
+                                <a href="#" class="text-primary fw-semibold" onclick="showPage('login')">Login here</a>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Login Page -->
+    <div id="loginPage" class="page hidden">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-md-5">
+                    <div class="card shadow-lg border-0">
+                        <div class="card-body p-5">
+                            <h2 class="text-center mb-4 fw-bold text-primary">
+                                <i class="fas fa-sign-in-alt"></i> Welcome Back
+                            </h2>
+                            <form onsubmit="login(event)">
+                                <div class="mb-3">
+                                    <label class="form-label fw-semibold">Email</label>
+                                    <input type="email" class="form-control" id="loginEmail" required>
+                                </div>
+                                <div class="mb-4">
+                                    <label class="form-label fw-semibold">Password</label>
+                                    <input type="password" class="form-control" id="loginPassword" required>
+                                </div>
+                                <button type="submit" class="btn btn-primary btn-lg w-100">
+                                    <i class="fas fa-arrow-right"></i> Login
+                                </button>
+                            </form>
+                            <p class="text-center mt-4 mb-0">
+                                Don't have an account? 
+                                <a href="#" class="text-primary fw-semibold" onclick="showPage('register')">Register here</a>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Dashboard Page -->
+    <div id="dashboardPage" class="page hidden">
+        <div class="container">
+            <h1 class="fw-bold mb-4">Welcome back, <span id="userName"></span>! 👋</h1>
+            
+            <div class="row g-4 mb-4">
+                <div class="col-md-3">
+                    <div class="stat-card">
+                        <i class="fas fa-user fa-2x text-primary mb-2"></i>
+                        <h6 class="text-muted">Age</h6>
+                        <h3 id="userAge"></h3>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="stat-card">
+                        <i class="fas fa-weight fa-2x text-success mb-2"></i>
+                        <h6 class="text-muted">Weight</h6>
+                        <h3><span id="userWeight"></span> kg</h3>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="stat-card">
+                        <i class="fas fa-bullseye fa-2x text-warning mb-2"></i>
+                        <h6 class="text-muted">Goal</h6>
+                        <h3 id="userGoal" class="text-capitalize"></h3>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="stat-card">
+                        <i class="fas fa-fire fa-2x text-danger mb-2"></i>
+                        <h6 class="text-muted">Calories</h6>
+                        <h3><span id="userCalories"></span></h3>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-body p-4">
+                    <h4 class="fw-bold mb-4"><i class="fas fa-dumbbell text-primary"></i> Choose Your Workout</h4>
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <div class="workout-card card h-100" onclick="showWorkout('home')">
+                                <div class="card-body text-center p-4">
+                                    <i class="fas fa-home fa-3x text-primary mb-3"></i>
+                                    <h5 class="fw-bold">Home Workout</h5>
+                                    <p class="text-muted">No equipment needed</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="workout-card card h-100" onclick="showWorkout('gym')">
+                                <div class="card-body text-center p-4">
+                                    <i class="fas fa-building fa-3x text-success mb-3"></i>
+                                    <h5 class="fw-bold">Gym Workout</h5>
+                                    <p class="text-muted">Advanced exercises</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row g-4">
+                <div class="col-md-8">
+                    <div class="card border-0 shadow-sm">
+                        <div class="card-body p-4">
+                            <h4 class="fw-bold mb-4"><i class="fas fa-chart-line text-info"></i> Your Progress</h4>
+                            <canvas id="progressChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card border-0 shadow-sm">
+                        <div class="card-body p-4">
+                            <h4 class="fw-bold mb-4"><i class="fas fa-bolt text-warning"></i> Quick Actions</h4>
+                            <div class="d-grid gap-3">
+                                <button class="btn btn-success btn-lg" onclick="showPage('diet')">
+                                    <i class="fas fa-utensils"></i> View Diet Plan
+                                </button>
+                                <button class="btn btn-primary btn-lg" onclick="showWorkout('home')">
+                                    <i class="fas fa-running"></i> Start Workout
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Workout Page -->
+    <div id="workoutPage" class="page hidden">
+        <div class="container">
+            <div class="row mb-4 align-items-center">
+                <div class="col-md-8">
+                    <h1 class="fw-bold"><span id="workoutTitle"></span> Workout Plan</h1>
+                </div>
+                <div class="col-md-4 text-end">
+                    <button class="btn btn-success btn-lg no-print" onclick="printPage()">
+                        <i class="fas fa-download"></i> Download PDF
+                    </button>
+                </div>
+            </div>
+
+            <div class="alert alert-info no-print">
+                <i class="fas fa-info-circle"></i> <strong>Pro Tip:</strong> Warm up for 5-10 minutes before starting!
+            </div>
+
+            <div id="workoutList" class="row g-4"></div>
+
+            <div class="text-center mt-5 no-print">
+                <button class="btn btn-outline-primary btn-lg" onclick="showPage('dashboard')">
+                    <i class="fas fa-arrow-left"></i> Back to Dashboard
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Diet Page -->
+    <div id="dietPage" class="page hidden">
+        <div class="container">
+            <div class="row mb-4 align-items-center">
+                <div class="col-md-8">
+                    <h1 class="fw-bold">Your Personalized Diet Plan</h1>
+                    <p class="text-muted">Daily Target: <strong><span id="dietCalories"></span> calories</strong></p>
+                </div>
+                <div class="col-md-4 text-end">
+                    <button class="btn btn-success btn-lg no-print" onclick="printPage()">
+                        <i class="fas fa-download"></i> Download PDF
+                    </button>
+                </div>
+            </div>
+
+            <div class="alert alert-warning no-print">
+                <i class="fas fa-exclamation-triangle"></i> <strong>Important:</strong> Drink 8-10 glasses of water daily!
+            </div>
+
+            <div id="dietContent"></div>
+
+            <div class="text-center mt-5 no-print">
+                <button class="btn btn-outline-primary btn-lg" onclick="showPage('dashboard')">
+                    <i class="fas fa-arrow-left"></i> Back to Dashboard
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- About Page -->
+    <div id="aboutPage" class="page hidden">
+        <div class="container">
+            <div class="text-center mb-5">
+                <h1 class="display-4 fw-bold">About Shape You</h1>
+                <p class="lead text-muted">Your trusted partner in fitness</p>
+            </div>
+
+            <div class="row align-items-center mb-5">
+                <div class="col-lg-6">
+                    <div class="bg-primary text-white p-5 rounded-3 d-flex align-items-center justify-content-center" style="height: 400px;">
+                        <i class="fas fa-heartbeat" style="font-size: 10rem; opacity: 0.3;"></i>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <h2 class="fw-bold mb-4">Our Mission</h2>
+                    <p class="lead">Shape You helps individuals achieve fitness goals through personalized workout and diet plans.</p>
+                    <p>We combine scientific principles with practical approaches for sustainable fitness habits.</p>
+                </div>
+            </div>
+
+            <div class="row g-4">
+                <div class="col-md-6">
+                    <div class="card border-0 shadow-sm h-100">
+                        <div class="card-body p-4">
+                            <i class="fas fa-dumbbell fa-2x text-primary mb-3"></i>
+                            <h4 class="fw-bold">Customized Workouts</h4>
+                            <p class="text-muted">Tailored exercise routines for home or gym that match your goals.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card border-0 shadow-sm h-100">
+                        <div class="card-body p-4">
+                            <i class="fas fa-utensils fa-2x text-success mb-3"></i>
+                            <h4 class="fw-bold">Nutrition Plans</h4>
+                            <p class="text-muted">Balanced meal plans aligned with your weight goals.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Contact Page -->
+    <div id="contactPage" class="page hidden">
+        <div class="container">
+            <div class="text-center mb-5">
+                <h1 class="display-4 fw-bold">Get In Touch</h1>
+                <p class="lead text-muted">We'd love to hear from you!</p>
+            </div>
+
+            <div class="row g-4 mb-5">
+                <div class="col-md-4">
+                    <div class="card border-0 shadow-sm text-center">
+                        <div class="card-body p-4">
+                            <i class="fas fa-map-marker-alt fa-3x text-primary mb-3"></i>
+                            <h5 class="fw-bold">Address</h5>
+                            <p class="text-muted">Mumbai, Maharashtra<br>India</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card border-0 shadow-sm text-center">
+                        <div class="card-body p-4">
+                            <i class="fas fa-envelope fa-3x text-success mb-3"></i>
+                            <h5 class="fw-bold">Email</h5>
+                            <p class="text-muted">support@shapeyou.com</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card border-0 shadow-sm text-center">
+                        <div class="card-body p-4">
+                            <i class="fas fa-phone fa-3x text-info mb-3"></i>
+                            <h5 class="fw-bold">Phone</h5>
+                            <p class="text-muted">+91 98765 43210</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-lg-8 mx-auto">
+                    <div class="card border-0 shadow-lg">
+                        <div class="card-body p-5">
+                            <h3 class="fw-bold mb-4 text-center">Send Us a Message</h3>
+                            <form onsubmit="sendContact(event)">
+                                <div class="mb-3">
+                                    <label class="form-label fw-semibold">Your Name</label>
+                                    <input type="text" class="form-control form-control-lg" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label fw-semibold">Email</label>
+                                    <input type="email" class="form-control form-control-lg" required>
+                                </div>
+                                <div class="mb-4">
+                                    <label class="form-label fw-semibold">Message</label>
+                                    <textarea class="form-control form-control-lg" rows="5" required></textarea>
+                                </div>
+                                <button type="submit" class="btn btn-primary btn-lg w-100">
+                                    <i class="fas fa-paper-plane"></i> Send Message
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="no-print">
+        <div class="container text-center">
+            <div class="row">
+                <div class="col-md-4">
+                    <h5><i class="fas fa-dumbbell"></i> Shape You</h5>
+                    <p class="small">Transform your body, transform your life</p>
+                </div>
+                <div class="col-md-4">
+                    <h5>Quick Links</h5>
+                    <a href="#" onclick="showPage('home')" class="text-white-50 d-block">Home</a>
+                    <a href="#" onclick="showPage('about')" class="text-white-50 d-block">About</a>
+                    <a href="#" onclick="showPage('contact')" class="text-white-50 d-block">Contact</a>
+                </div>
+                <div class="col-md-4">
+                    <h5>Follow Us</h5>
+                    <a href="#" class="text-white me-3"><i class="fab fa-facebook fa-lg"></i></a>
+                    <a href="#" class="text-white me-3"><i class="fab fa-instagram fa-lg"></i></a>
+                    <a href="#" class="text-white"><i class="fab fa-twitter fa-lg"></i></a>
+                </div>
+            </div>
+            <hr class="bg-white mt-4">
+            <p class="mb-0">&copy; 2025 Shape You. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script>
+        // Data storage
+        let users = JSON.parse(localStorage.getItem('users')) || [];
+        let currentUser = JSON.parse(localStorage.getItem('currentUser')) || null;
+        let progressChart = null;
+
+        // Workout data
+        const workouts = {
+            home: [
+                {name: 'Push-ups', sets: '3x15', desc: 'Great for chest and arms'},
+                {name: 'Squats', sets: '3x20', desc: 'Build strong legs'},
+                {name: 'Planks', sets: '3x60s', desc: 'Core strength'},
+                {name: 'Lunges', sets: '3x15', desc: 'Leg and glute workout'},
+                {name: 'Mountain Climbers', sets: '3x30s', desc: 'Full body cardio'}
+            ],
+            gym: [
+                {name: 'Bench Press', sets: '4x12', desc: 'Chest builder'},
+                {name: 'Deadlifts', sets: '4x10', desc: 'Full body strength'},
+                {name: 'Barbell Squats', sets: '4x12', desc: 'Leg power'},
+                {name: 'Pull-ups', sets: '3x10', desc: 'Back and biceps'},
+                {name: 'Shoulder Press', sets: '3x12', desc: 'Strong shoulders'}
+            ]
+        };
+
+        // Diet data
+        const diets = {
+            lose: {
+                calories: 1500,
+                breakfast: ['Oatmeal with berries', 'Greek yogurt', 'Green tea'],
+                lunch: ['Grilled chicken salad', 'Quinoa bowl', 'Steamed vegetables'],
+                dinner: ['Baked fish', 'Sweet potato', 'Broccoli']
+            },
+            gain: {
+                calories: 2800,
+                breakfast: ['Scrambled eggs (4)', 'Whole wheat toast', 'Protein shake'],
+                lunch: ['Brown rice', 'Chicken breast (200g)', 'Mixed vegetables'],
+                dinner: ['Lean beef steak', 'Pasta', 'Caesar salad']
+            },
+            maintain: {
+                calories: 2000,
+                breakfast: ['Scrambled eggs (2)', 'Whole wheat toast', 'Orange juice'],
+                lunch: ['Grilled chicken', 'Brown rice', 'Mixed salad'],
+                dinner: ['Salmon', 'Quinoa', 'Green beans']
+            }
+        };
+
+        // Initialize
+        window.onload = function() {
+            if (currentUser) {
+                updateNav(true);
+            }
+            showPage('home');
+        };
+
+        // Show alert
+        function showAlert(message, type = 'success') {
+            const alertDiv = document.getElementById('alertContainer');
+            alertDiv.innerHTML = `
+                <div class="alert alert-${type} alert-dismissible fade show" role="alert">
+                    ${message}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            `;
+            setTimeout(() => alertDiv.innerHTML = '', 3000);
+        }
+
+        // Page navigation
+        function showPage(pageName) {
+            document.querySelectorAll('.page').forEach(p => p.classList.add('hidden'));
+            document.getElementById(pageName + 'Page').classList.remove('hidden');
+            window.scrollTo(0, 0);
+
+            if (pageName === 'dashboard' && currentUser) {
+                loadDashboard();
+            } else if (pageName === 'diet' && currentUser) {
+                loadDiet();
+            }
+        }
+
+        // Update navigation
+        function updateNav(isLoggedIn) {
+            document.getElementById('loginNav').classList.toggle('hidden', isLoggedIn);
+            document.getElementById('registerNav').classList.toggle('hidden', isLoggedIn);
+            document.getElementById('dashboardNav').classList.toggle('hidden', !isLoggedIn);
+            document.getElementById('logoutNav').classList.toggle('hidden', !isLoggedIn);
+        }
+
+        // Register
+        function register(e) {
+            e.preventDefault();
+            const user = {
+                name: document.getElementById('regName').value,
+                age: document.getElementById('regAge').value,
+                weight: document.getElementById('regWeight').value,
+                email: document.getElementById('regEmail').value,
+                password: document.getElementById('regPassword').value,
+                goal: document.getElementById('regGoal').value,
+                date: new Date().toISOString()
+            };
+
+            if (users.find(u => u.email === user.email)) {
+                showAlert('Email already exists!', 'danger');
+                return;
+            }
+
+            users.push(user);
+            localStorage.setItem('users', JSON.stringify(users));
+            showAlert('Registration successful! Please login.', 'success');
+            showPage('login');
+        }
+
+        // Login
+        function login(e) {
+            e.preventDefault();
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+
+            const user = users.find(u => u.email === email && u.password === password);
+            if (user) {
+                currentUser = user;
+                localStorage.setItem('currentUser', JSON.stringify(user));
+                updateNav(true);
+                showAlert('Login successful!', 'success');
+                showPage('dashboard');
+            } else {
+                showAlert('Invalid email or password', 'danger');
+            }
+        }
+
+        // Logout
+        function logout() {
+            currentUser = null;
+            localStorage.removeItem('currentUser');
+            updateNav(false);
+            showAlert('Logged out successfully', 'info');
+            showPage('home');
+        }
+
+        // Load Dashboard
+        function loadDashboard() {
+            if (!currentUser) return;
+            
+            document.getElementById('userName').textContent = currentUser.name;
+            document.getElementById('userAge').textContent = currentUser.age;
+            document.getElementById('userWeight').textContent = currentUser.weight;
+            document.getElementById('userGoal').textContent = currentUser.goal;
+            document.getElementById('userCalories').textContent = diets[currentUser.goal].calories;
+
+            // Create progress chart
+            const ctx = document.getElementById('progressChart');
+            if (progressChart) {
+                progressChart.destroy();
+            }
+            
+            progressChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4'],
+                    datasets: [{
+                        label: 'Weight (kg)',
+                        data: [
+                            parseFloat(currentUser.weight),
+                            parseFloat(currentUser.weight) - 1,
+                            parseFloat(currentUser.weight) - 2,
+                            parseFloat(currentUser.weight) - 2.5
+                        ],
+                        borderColor: 'rgb(75, 192, 192)',
+                        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                        tension: 0.3,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            display: true
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: false
+                        }
+                    }
+                }
+            });
+        }
+
+        // Show Workout
+        function showWorkout(type) {
+            if (!currentUser) {
+                showAlert('Please login first', 'warning');
+                showPage('login');
+                return;
+            }
+
+            document.getElementById('workoutTitle').textContent = type.charAt(0).toUpperCase() + type.slice(1);
+            const workoutList = document.getElementById('workoutList');
+            workoutList.innerHTML = '';
+
+            workouts[type].forEach(workout => {
+                workoutList.innerHTML += `
+                    <div class="col-md-6 col-lg-4">
+                        <div class="card h-100 border-0 shadow-sm">
+                            <div class="card-img-top bg-gradient text-white d-flex align-items-center justify-content-center" 
+                                 style="height: 200px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                                <i class="fas fa-dumbbell fa-4x"></i>
+                            </div>
+                            <div class="card-body">
+                                <h5 class="card-title fw-bold">${workout.name}</h5>
+                                <p class="text-muted mb-2">${workout.desc}</p>
+                                <span class="badge bg-primary fs-6 px-3 py-2">
+                                    <i class="fas fa-repeat"></i> ${workout.sets}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+
+            showPage('workout');
+        }
+
+        // Load Diet
+        function loadDiet() {
+            if (!currentUser) return;
+
+            const diet = diets[currentUser.goal];
+            document.getElementById('dietCalories').textContent = diet.calories;
+
+            const dietContent = document.getElementById('dietContent');
+            dietContent.innerHTML = `
+                <div class="meal-section">
+                    <div class="d-flex align-items-center mb-3" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 15px; border-radius: 10px; color: white;">
+                        <i class="fas fa-sun fa-2x me-3"></i>
+                        <h4 class="mb-0">Breakfast</h4>
+                    </div>
+                    <ul class="list-group list-group-flush">
+                        ${diet.breakfast.map(item => `
+                            <li class="list-group-item d-flex align-items-center">
+                                <i class="fas fa-check-circle text-success me-3"></i>
+                                <span class="fs-5">${item}</span>
+                            </li>
+                        `).join('')}
+                    </ul>
+                </div>
+
+                <div class="meal-section">
+                    <div class="d-flex align-items-center mb-3" style="background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%); padding: 15px; border-radius: 10px; color: white;">
+                        <i class="fas fa-cloud-sun fa-2x me-3"></i>
+                        <h4 class="mb-0">Lunch</h4>
+                    </div>
+                    <ul class="list-group list-group-flush">
+                        ${diet.lunch.map(item => `
+                            <li class="list-group-item d-flex align-items-center">
+                                <i class="fas fa-check-circle text-success me-3"></i>
+                                <span class="fs-5">${item}</span>
+                            </li>
+                        `).join('')}
+                    </ul>
+                </div>
+
+                <div class="meal-section">
+                    <div class="d-flex align-items-center mb-3" style="background: linear-gradient(135deg, #667eea 0%, #48a9fe 100%); padding: 15px; border-radius: 10px; color: white;">
+                        <i class="fas fa-moon fa-2x me-3"></i>
+                        <h4 class="mb-0">Dinner</h4>
+                    </div>
+                    <ul class="list-group list-group-flush">
+                        ${diet.dinner.map(item => `
+                            <li class="list-group-item d-flex align-items-center">
+                                <i class="fas fa-check-circle text-success me-3"></i>
+                                <span class="fs-5">${item}</span>
+                            </li>
+                        `).join('')}
+                    </ul>
+                </div>
+
+                <div class="row g-4 mt-3">
+                    <div class="col-md-4">
+                        <div class="card border-0 shadow-sm h-100 text-white" style="background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);">
+                            <div class="card-body text-center p-4">
+                                <i class="fas fa-apple-alt fa-3x mb-3"></i>
+                                <h5 class="fw-bold">Eat Clean</h5>
+                                <p class="mb-0">Focus on whole, unprocessed foods</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card border-0 shadow-sm h-100 text-white" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                            <div class="card-body text-center p-4">
+                                <i class="fas fa-clock fa-3x mb-3"></i>
+                                <h5 class="fw-bold">Meal Timing</h5>
+                                <p class="mb-0">Eat at regular intervals</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card border-0 shadow-sm h-100 text-white" style="background: linear-gradient(135deg, #667eea 0%, #48a9fe 100%);">
+                            <div class="card-body text-center p-4">
+                                <i class="fas fa-tint fa-3x mb-3"></i>
+                                <h5 class="fw-bold">Stay Hydrated</h5>
+                                <p class="mb-0">Drink 8-10 glasses daily</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Contact form
+        function sendContact(e) {
+            e.preventDefault();
+            showAlert('Message sent successfully! We will get back to you soon.', 'success');
+            e.target.reset();
+        }
+
+        // Print page (acts as PDF download)
+        function printPage() {
+            window.print();
+        }
+    </script>
+</body>
+</html>
